@@ -1,0 +1,16 @@
+[package]
+name = "crag"
+version = "0.1.0"
+edition = "2021"
+authors = ["mlsvrts <mlsvrts@protonmail.com>"]
+description = "Google from the command line"
+readme = "README.md"
+repository = "https://github.com/mlsvrts/crag"
+license = "MIT"
+keywords = ["cli", "google", "productivity"]
+categories = ["command-line-utilities"]
+
+[badges]
+maintenance = { status = "actively-developed" }
+
+[dependencies]
