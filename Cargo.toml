@@ -3,14 +3,31 @@ name = "crag"
 version = "0.1.0"
 edition = "2021"
 authors = ["mlsvrts <mlsvrts@protonmail.com>"]
-description = "Google from the command line"
+description = "Search from the command line"
 readme = "README.md"
 repository = "https://github.com/mlsvrts/crag"
 license = "MIT"
-keywords = ["cli", "google", "productivity"]
+keywords = ["cli", "google", "search", "productivity"]
 categories = ["command-line-utilities"]
 
 [badges]
 maintenance = { status = "actively-developed" }
 
-[dependencies]
+# Generating the command line GUI
+# derive: Enables the custom derive macro
+# unicode: Support for unicode in arguments
+# wrap_help: Wrap help messages based on terminal size
+# env: Support parsing unused arguments from environment variables
+[dependencies.clap]
+version = "4.0"
+features = ["derive", "unicode", "wrap_help", "env"]
+
+# Make requests to web APIs
+[dependencies.ureq]
+version = "2.6"
+
+# Support for Clone-able Box<dyn MyTrait>
+# 
+# The clap derive syntax enforces Clone, so we'll use this crate.
+[dependencies.dyn-clone]
+version = "1.0"

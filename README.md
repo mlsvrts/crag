@@ -1,10 +1,21 @@
 # Crag
 
-`crag` is a *c*ommand-line *r*ust based application for *a*cessing *g*oogle search results.
+`crag` is a *c*ommand-line *r*ust based application for *a*cessing (*g*oogle) search results.
 
-## Features
+## Quickstart
 
-- [ ] Googles things (from the command line!)
+_Coming soon!_
+
+### Usage
+
+_Coming (less) soon!_
+
+## Overview
+
+### Features
+
+- [x] Searches things (from the command line!)
+- [ ] Clean search result display
 
 ## Alternatives
 
