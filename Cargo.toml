@@ -1,6 +1,6 @@
 [package]
 name = "crag"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["mlsvrts <mlsvrts@protonmail.com>"]
 description = "Search from the command line"
@@ -23,11 +23,15 @@ version = "4.0"
 features = ["derive", "unicode", "wrap_help", "env"]
 
 # Make requests to web APIs
+# json: Support decoding json responses via serde_json
 [dependencies.ureq]
 version = "2.6"
+features = ["json"]
 
-# Support for Clone-able Box<dyn MyTrait>
-# 
-# The clap derive syntax enforces Clone, so we'll use this crate.
-[dependencies.dyn-clone]
-version = "1.0"
+# Support storing search source urls as a Url type
+[dependencies.url]
+version = "2.3"
+
+# Support colored terminal output
+[dependencies.colored]
+version = "2"

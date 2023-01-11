@@ -16,9 +16,16 @@ mod engines;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = args::Args::parse();
 
-    let results = args.engine.search(args.query)?;
+    let engine: Box<dyn soap::Soap> = match &args.engine[..] {
+        "qwant" => Box::new(engines::Qwant::new(args.engine_options)),
+        k => Err(format!("Invalid engine '{k}' was specified"))?,
+    };
 
-    println!("{results}");
+    let results = engine.search(args.query)?;
+
+    for (idx, item) in results.iter().enumerate() {
+        print!("\n{}. {item}\n", idx + 1);
+    }
 
     Ok(())
 }
