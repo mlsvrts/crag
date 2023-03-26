@@ -6,23 +6,17 @@ use ureq::serde_json::Value;
 const QWANT_BASE_URL: &str = "https://api.qwant.com/v3";
 
 /// Qwant.com search engine implementation
+#[derive(Debug, Default)]
 pub struct Qwant {
     options: EngineOptions,
 }
 
 impl Qwant {
-    /// Build a new Qwant search engine
-    pub fn new(options: EngineOptions) -> Self {
-        Qwant { options }
-    }
-
     /// Build a new search API call from a query
     fn search_builder(query: Query) -> String {
         format!(
             "{QWANT_BASE_URL}/search/web?q={}&locale={}&count={}",
-            query.query.join(" "),
-            query.locale,
-            query.count
+            query.query, query.locale, query.count
         )
     }
 
@@ -75,12 +69,17 @@ impl Qwant {
             }
         }
 
-        return Ok(output);
+        Ok(output)
     }
 }
 
 /// Provides a search implementation for the Qwant API
 impl Soap for Qwant {
+    fn configure(&mut self, options: EngineOptions) -> Result<(), Box<dyn std::error::Error>> {
+        self.options = options;
+        Ok(())
+    }
+
     fn search(&self, mut query: Query) -> Result<SearchResults, Box<dyn std::error::Error>> {
         let count = query.count;
 
@@ -89,13 +88,15 @@ impl Soap for Qwant {
             query.count = 10;
         }
 
-        // Make the intial search result request
+        // Make the initial search result request
         let resp = match ureq::get(&Qwant::search_builder(query)[..]).call() {
             Ok(r) => r,
             Err(ureq::Error::Status(code, r)) => {
                 // Qwant returns an error body, so we'll print it here.
                 let status_text = String::from(r.status_text());
-                let body = r.into_string().unwrap_or("Failed".into());
+                let body = r
+                    .into_string()
+                    .unwrap_or_else(|e| format!("Failed to parse body: {}", e));
 
                 eprintln!("Error Response: {body}");
 

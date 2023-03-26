@@ -1,30 +1,56 @@
 //! Crag
 //!
-//! A binary crate that provides access to search engines from the command line.
+//! Search from the command line
 
+use crag::*;
+
+use clap::builder::PossibleValuesParser;
 use clap::Parser;
 
-/// Argument parsing
-mod args;
+use colored::Colorize;
 
-/// Core search API wrapper (search over any protocol)
-mod soap;
+/// Search, but it's terminal
+#[derive(Parser)]
+pub struct Args {
+    /// Query that will be sent to Custom Search API
+    #[command(flatten)]
+    pub query: Query,
 
-/// Implements [`soap::Soap`] for various search providers
-mod engines;
+    /// Search engine that will be used when performing query
+    #[arg(short, long, default_value="qwant", value_parser=PossibleValuesParser::new(["qwant"]))]
+    pub engine: String,
+
+    /// Provide engine customization options
+    #[command(flatten)]
+    pub engine_options: EngineOptions,
+
+    /// Query string that will be transmitted to the engine
+    #[arg(trailing_var_arg = true)]
+    pub query_cli: Vec<String>,
+}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = args::Args::parse();
+    let mut args = Args::parse();
 
-    let engine: Box<dyn soap::Soap> = match &args.engine[..] {
-        "qwant" => Box::new(engines::Qwant::new(args.engine_options)),
+    // We need to update our query from the cli args
+    args.query.query = args.query_cli.join(" ");
+
+    let mut engine: Box<dyn Soap> = match &args.engine[..] {
+        "qwant" => Box::<engines::Qwant>::default(),
         k => Err(format!("Invalid engine '{k}' was specified"))?,
     };
 
+    engine.configure(args.engine_options)?;
     let results = engine.search(args.query)?;
 
     for (idx, item) in results.iter().enumerate() {
-        print!("\n{}. {item}\n", idx + 1);
+        print!(
+            "\n{}. {}\n{}\n{}\n",
+            idx + 1,
+            item.title.green(),
+            format!("{}", item.source).italic().blue(),
+            item.description.dimmed().white()
+        );
     }
 
     Ok(())

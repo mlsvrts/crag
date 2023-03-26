@@ -1,6 +1,6 @@
 [package]
 name = "crag"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["mlsvrts <mlsvrts@protonmail.com>"]
 description = "Search from the command line"
@@ -8,19 +8,12 @@ readme = "README.md"
 repository = "https://github.com/mlsvrts/crag"
 license = "MIT"
 keywords = ["cli", "google", "search", "productivity"]
-categories = ["command-line-utilities"]
+categories = ["command-line-utilities", "web-programming"]
 
 [badges]
 maintenance = { status = "actively-developed" }
 
-# Generating the command line GUI
-# derive: Enables the custom derive macro
-# unicode: Support for unicode in arguments
-# wrap_help: Wrap help messages based on terminal size
-# env: Support parsing unused arguments from environment variables
-[dependencies.clap]
-version = "4.0"
-features = ["derive", "unicode", "wrap_help", "env"]
+# Library Dependencies:
 
 # Make requests to web APIs
 # json: Support decoding json responses via serde_json
@@ -32,6 +25,31 @@ features = ["json"]
 [dependencies.url]
 version = "2.3"
 
+[lib]
+name = "crag"
+path = "src/lib.rs"
+
+# CLI Dependencies:
+
+# Generating the command line GUI
+# derive: Enables the custom derive macro
+# unicode: Support for unicode in arguments
+# wrap_help: Wrap help messages based on terminal size
+# env: Support parsing unused arguments from environment variables
+[dependencies.clap]
+version = "4.0"
+optional = true
+features = ["derive", "unicode", "wrap_help", "env"]
+
 # Support colored terminal output
 [dependencies.colored]
+optional = true
 version = "2"
+
+[features]
+cli = ["clap", "colored"]
+
+[[bin]]
+name = "crag"
+path = "src/main.rs"
+required-features = ["cli"]
