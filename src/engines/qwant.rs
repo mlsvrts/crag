@@ -43,10 +43,10 @@ impl Qwant {
                 _ => {}
             };
 
-            let sub_results = result
-                .get("items")
-                .and_then(|r| r.as_array())
-                .ok_or("encountered bad meta result")?;
+            let sub_results = match result.get("items").and_then(|r| r.as_array()) {
+                Some(x) => x,
+                None => continue,
+            };
 
             // Parse meta result groups into SearchResults
             for item in sub_results {
